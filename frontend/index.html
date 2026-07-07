@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input, textarea { padding: 10px; }
+        button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Submit Feedback</h1>
+    <form id="feedbackForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+        <textarea id="message" placeholder="Your Feedback" rows="5" required></textarea>
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        const API_ENDPOINT = 'https://YOUR_API_GATEWAY_URL.execute-api.us-east-1.amazonaws.com/prod/feedback'; // Update this
+
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message })
+                });
+
+                const result = await response.json();
+                document.getElementById('response').innerHTML = `<p style="color:green;">${result.message}</p>`;
+            } catch (error) {
+                document.getElementById('response').innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
